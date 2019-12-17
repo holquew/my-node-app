@@ -1,0 +1,50 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Search Misson</title>
+  </head>
+  <body>
+    <h1>검색 페이지</h1>
+    <form action="/search_post" method="POST">
+      <input type="text" name="keyword" />
+    </form>
+    <button class="search-submit">검색</button>
+
+    <div class="search-result"></div>
+    <div class="text-result"></div>
+
+    <script>
+      var lorem =
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+      document
+        .querySelector(".search-submit")
+        .addEventListener("click", function() {
+          var inputdata = document.forms[0].elements[0].value;
+          ajaxSend("http://127.0.0.1:3000/ajax_search", inputdata);
+        });
+      function ajaxSend(url, data) {
+        console.log(data);
+        var data = { "search": data, "text": lorem };
+        data = JSON.stringify(data);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+
+        xhr.addEventListener("load", function() {
+          var result = JSON.parse(xhr.responseText);
+          if (result.result !== "ok") {
+            document.querySelector(".search-result").innerHTML = "결과 없음";
+            document.querySelector(".text-result").innerHTML = "내용 없음";
+          } else {
+            document.querySelector(".search-result").innerHTML = result.search;
+            document.querySelector(".text-result").innerHTML = result.text;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
